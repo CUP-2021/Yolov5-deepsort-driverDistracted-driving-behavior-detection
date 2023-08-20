@@ -5,7 +5,7 @@ import numpy as np
 import cv2
 import torch
 from numpy import random
-#import evaluator
+# import evaluator
 from models.experimental import attempt_load
 from utils.general import check_img_size, non_max_suppression, scale_coords, \
     set_logging

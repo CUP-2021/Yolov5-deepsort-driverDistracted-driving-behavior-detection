@@ -14,6 +14,7 @@ import math
 import time
 from threading import Thread
 
+# eye_aspect_ratio为计算眼睛的EAR值
 def eye_aspect_ratio(eye):
     # 垂直眼标志（X，Y）坐标
     A = dist.euclidean(eye[1], eye[5])  # 计算两个集合之间的欧式距离
@@ -26,6 +27,7 @@ def eye_aspect_ratio(eye):
     # 返回眼睛的长宽比
     return ear
 
+# 计算嘴部的MAR值
 def mouth_aspect_ratio(mouth):  # 嘴部
     A = np.linalg.norm(mouth[2] - mouth[10])  # 51, 59
     B = np.linalg.norm(mouth[4] - mouth[8])  # 53, 57
@@ -46,20 +48,26 @@ predictor = dlib.shape_predictor('weights/shape_predictor_68_face_landmarks.dat'
 
 # 从视频流循环帧
 def detfatigue(frame):
-    #frame = imutils.resize(frame, width=720)
+    # 将图片帧重新改变尺寸
+    frame = imutils.resize(frame, width=720)
+    # 将图片转化为灰度图
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     # 使用detector(gray, 0) 进行脸部位置检测
+    # 通过灰度图进行脸部检测，得到脸部信息数据
     rects = detector(gray, 0)
     eyear = 0.0
     mouthar = 0.0
     # 循环脸部位置信息，使用predictor(gray, rect)获得脸部特征位置的信息
+    # 将从灰度图检测到的人脸信息进行循环
     for rect in rects:
+        # 调用dlib.shape_predictor('weights/shape_predictor_68_face_landmarks.dat')
         shape = predictor(gray, rect)
 
-        # 将脸部特征信息转换为数组array的格式
+        # 将脸部特征信息转换为数组array的格式，此时的shape是一个数组形式
         shape = face_utils.shape_to_np(shape)
 
-        # 提取左眼和右眼坐标
+        # 通过数组索引取数据的方式将左眼，右眼，以及嘴巴坐标取出来
+        # 提取左眼和右眼坐标，
         leftEye = shape[lStart:lEnd]
         rightEye = shape[rStart:rEnd]
         # 嘴巴坐标
